@@ -1,5 +1,4 @@
 export default function Home() {
-  return (
-   <div>hi</div>
-  );
+
+  return <>bye</>;
 }

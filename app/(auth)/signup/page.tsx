@@ -11,7 +11,7 @@ const Signup = () => {
         <div className="flex h-min w-full justify-end items-center gap-3 pr-6 pt-4">
           <text className="text-[14px] font-medium">Do have an account?</text>
           <Button variant="link" asChild className="p-0">
-            <Link href="/auth/login">Sign In</Link>
+            <Link href="/login">Sign In</Link>
           </Button>
         </div>
         <div className="flex h-full w-full justify-center items-end">

@@ -2,12 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { Loader } from "lucide-react";
 
 import { signupaction } from "../actions/authaction";
 
 import { useFormState, useFormStatus } from "react-dom";
+import { useState } from "react";
 
 const initialState = {
   errors: {},
@@ -18,7 +20,7 @@ const Submitbutton = () => {
   return (
     <>
       <Button type="submit" className="w-[70%] mt-3" disabled={pending}>
-        {pending &&<Loader className="mr-2 h-4 w-4 animate-spin"/>}
+        {pending && <Loader className="mr-2 h-4 w-4 animate-spin" />}
         Sign Up
       </Button>
     </>
@@ -26,7 +28,9 @@ const Submitbutton = () => {
 };
 
 const Signup = () => {
-  const [state, formAction] = useFormState(signupaction, initialState);
+  const [isInstructor, setIsInstructor] = useState(false);
+  const signupformaction = signupaction.bind(null, isInstructor);
+  const [state, formAction] = useFormState(signupformaction, initialState);
 
   return (
     <form
@@ -86,6 +90,21 @@ const Signup = () => {
             {state?.errors?.password}
           </div>
         )}
+      </div>
+      <div className="w-[70%] flex gap-2">
+        <Checkbox
+          name="is_instructor"
+          checked={isInstructor}
+          onCheckedChange={(e) => {
+            setIsInstructor(e);
+          }}
+        />
+        <label
+          htmlFor="is_instructor"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          Signup as Instructor
+        </label>
       </div>
       <Submitbutton />
     </form>
