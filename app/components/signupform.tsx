@@ -11,10 +11,6 @@ import { signupaction } from "../actions/authaction";
 import { useFormState, useFormStatus } from "react-dom";
 import { useState } from "react";
 
-const initialState = {
-  errors: {},
-};
-
 const Submitbutton = () => {
   const { pending } = useFormStatus();
   return (
@@ -30,7 +26,7 @@ const Submitbutton = () => {
 const Signup = () => {
   const [isInstructor, setIsInstructor] = useState(false);
   const signupformaction = signupaction.bind(null, isInstructor);
-  const [state, formAction] = useFormState(signupformaction, initialState);
+  const [state, formAction] = useFormState(signupformaction, null);
 
   return (
     <form

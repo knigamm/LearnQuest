@@ -76,7 +76,12 @@ export const loginaction = async (prevState: any, formdata: FormData) => {
     });
     const data = await response.json();
     if (data && data?.detail) {
-      return { errors: { password: data.detail } };
+      return {
+        errors: {
+          email: "",
+          password: data.detail,
+        },
+      };
     }
     cookies().set("session", data?.access_token, {
       httpOnly: true,
