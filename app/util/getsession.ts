@@ -1,8 +1,12 @@
-import { cookies } from "next/headers"
+import { cookies } from "next/headers";
 
-const getSession = () =>{
-    const response = cookies().get('session')
-    return response
-}
+const getSession = () => {
+  try {
+    const response = cookies().get("session");
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-export default getSession
+export default getSession;

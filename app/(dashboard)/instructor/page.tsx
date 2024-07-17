@@ -5,19 +5,19 @@ import InstructorDashboard from "@/app/components/instructordashboard";
 import getSession from "@/app/util/getsession";
 
 async function getInstructorCourses() {
+  const authToken = getSession()?.value;
   try {
-    const authToken = getSession()?.value;
     const response = await fetch(
-      `${process.env.BASE_URL}/api/course/instructor`,
+      `${process.env.BASE_URL}/api/course/instructor/all`,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       }
     );
-    console.log("response", response);
+
     const data = await response?.json();
-    console.log("data:", data);
+
     return data;
   } catch (error) {
     console.log(error);
@@ -26,10 +26,8 @@ async function getInstructorCourses() {
 }
 
 const Instructor = async () => {
-  const coursedata: CourseData[] = await getInstructorCourses()
-  return (
-   <InstructorDashboard coursedata={coursedata}/>
-  );
+  const coursedata: CourseData[] = await getInstructorCourses();
+  return <InstructorDashboard coursedata={coursedata} />;
 };
 
 export default Instructor;
