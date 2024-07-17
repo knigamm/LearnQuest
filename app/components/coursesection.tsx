@@ -10,7 +10,6 @@ import CourseSkeleton from "./courseskeleton";
 
 const getCourses = async () => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
     const authToken = getSession()?.value;
     const response = await fetch(
       `${process.env.BASE_URL}/api/course?page=1&limit=8`,
