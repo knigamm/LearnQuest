@@ -17,9 +17,9 @@ const SearchInput = ({
 }) => {
   const router = useRouter();
   const [query, setQuery] = useState(searchValue ? searchValue : "");
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      if(query==='') return;
+      if (query === "") return;
       router.push(`/search?q=${query}`);
     }
   };

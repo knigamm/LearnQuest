@@ -92,7 +92,9 @@ const Signup = () => {
           name="is_instructor"
           checked={isInstructor}
           onCheckedChange={(e) => {
-            setIsInstructor(e);
+            if (e !== "indeterminate") {
+              setIsInstructor(e);
+            }
           }}
         />
         <label
