@@ -3,13 +3,16 @@ import { cn } from "@/lib/utils";
 export interface ISVGProps extends React.SVGProps<SVGSVGElement> {
   size?: number;
   className?: string;
+  isLoading: boolean;
 }
 
 export const LoadingSpinner = ({
   size = 3,
   className,
+  isLoading,
   ...props
 }: ISVGProps) => {
+  if (!isLoading) return;
   return (
     <div className="fixed top-0 left-0 w-screen h-screen z-50 flex justify-center items-center blur-sm]">
       <div className="absolute inset-0 bg-black/30 opacity-20 backdrop-blur-2xlxl"></div>

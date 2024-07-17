@@ -7,7 +7,6 @@ import getSession from "@/app/util/getsession";
 async function getInstructorCourses() {
   try {
     const authToken = getSession()?.value;
-    console.log(authToken);
     const response = await fetch(
       `${process.env.BASE_URL}/api/course/instructor`,
       {

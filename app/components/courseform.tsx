@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { CourseCreation } from "../util/types";
+import { LoadingSpinner } from "@/components/ui/loader";
+
+import { getImageSignedUrl, createCourse } from "../actions/courseactions";
 
 import Image from "next/image";
 
-import { useForm, SubmitHandler, ValidationModeFlags } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,6 +20,7 @@ import { z } from "zod";
 import { ArrowLeftIcon } from "lucide-react";
 
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 type courseformdata = z.infer<typeof CourseCreation>;
 const stepField = ["title", "description", "price", "image"] as const;
@@ -25,25 +29,68 @@ const CourseForm = () => {
   const [step, setStep] = useState(1);
   const [prevStep, setPrevStep] = useState(0);
   const delta = step - prevStep;
+
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [fileUrl, setFileUrl] = useState<string>("");
+
+  const handleFile = (e: React.ChangeEvent<HTMLFormElement>) => {
+    const file = e.target.files?.[0];
+    setFile(file);
+
+    if (fileUrl) {
+      URL.revokeObjectURL(fileUrl);
+    }
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setFileUrl(url);
+    } else {
+      setFileUrl("");
+    }
+  };
+
   const {
     register,
     handleSubmit,
     trigger,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    clearErrors,
+    setError,
   } = useForm<courseformdata>({
     resolver: zodResolver(CourseCreation),
   });
 
-  const processForm: SubmitHandler<courseformdata> = (data) => {
-    const formdata = new FormData()
-    for(let key in data){
-      formdata.append(key,data[key as keyof courseformdata] as string)
+  const processForm: SubmitHandler<courseformdata> = async (data) => {
+    try {
+      if (file) {
+        const formdata = new FormData();
+        formdata.append("title", data.title);
+        formdata.append("description", data.description);
+        formdata.append("price", data.price);
+        const signedUrl = await getImageSignedUrl(file.type, file.size);
+        if (signedUrl.failure !== undefined) {
+          setError("image", { type: "invalid", message: signedUrl.failure });
+          return;
+        }
+        const url = signedUrl?.success?.url;
+        formdata.append("image", url.split("?")[0]);
+        await createCourse(formdata);
+        await fetch(url, {
+          method: "PUT",
+          body: file,
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+        toast.success("Course created successfully!");
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error("Something went wrong");
     }
   };
 
   const next = async () => {
     const validationField = stepField[step - 1];
-    console.log(validationField);
     const validation = await trigger(validationField, { shouldFocus: true });
     if (!validation) return;
     if (step === 4) {
@@ -52,6 +99,7 @@ const CourseForm = () => {
       setPrevStep(step);
       setStep(step + 1);
     }
+    clearErrors();
   };
 
   const prev = () => {
@@ -62,6 +110,7 @@ const CourseForm = () => {
   return (
     <>
       <div className="max-w-4xl mx-auto p-6 sm:p-8 md:p-10 mt-10">
+        <LoadingSpinner isLoading={isSubmitting} />
         <div className="grid gap-8">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold">
@@ -199,7 +248,6 @@ const CourseForm = () => {
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                 >
                   <div>
-                    <input type="hidden" value={"hi"} {...register("image")} />
                     <Button
                       onClick={prev}
                       variant="link"
@@ -217,6 +265,10 @@ const CourseForm = () => {
                       type="file"
                       id="course_image"
                       className="max-w-2xl"
+                      {...register("image", {
+                        onChange: (e) => handleFile(e),
+                      })}
+                      accept="image/jpeg,image/png,image/webp"
                     />
                     {errors?.image?.message && (
                       <div className="text-red-500 text-xs mt-1">
@@ -224,19 +276,21 @@ const CourseForm = () => {
                       </div>
                     )}
                   </div>
-                  {/* <div className="flex items-center justify-center">
-              <Image
-                src="/placeholder.svg"
-                alt="Course Image"
-                width={300}
-                height={200}
-                className="rounded-md"
-              />
-              
-            </div> */}
+                  {fileUrl && file && (
+                    <div className="flex items-center mt-5">
+                      <Image
+                        src={fileUrl}
+                        alt="Course Image"
+                        width={300}
+                        height={200}
+                        className="rounded-md w-auto"
+                      />
+                    </div>
+                  )}
 
                   <Button
                     onClick={next}
+                    disabled={isSubmitting}
                     className="w-full max-w-[200px] justify-self-start mt-8"
                   >
                     Create Course

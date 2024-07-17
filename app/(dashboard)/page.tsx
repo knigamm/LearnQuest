@@ -1,4 +1,9 @@
-export default function Home() {
+import HomeDashboard from "../components/homedashboard";
 
-  return <>bye</>;
+export default function Home() {
+  return (
+    <>
+    <HomeDashboard/>
+    </>
+  );
 }

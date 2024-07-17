@@ -33,7 +33,6 @@ export const signupaction = async (
   if (!validatedFields.success) {
     return { errors: validatedFields.error.flatten().fieldErrors };
   }
-  console.log("validated data", validatedFields);
   try {
     await fetch(`${process.env.BASE_URL}/api/auth/signup`, {
       method: "POST",
@@ -92,5 +91,5 @@ export const loginaction = async (prevState: any, formdata: FormData) => {
 
 export const logoutaction = () => {
   cookies().delete("session");
-  redirect("/login");
+  redirect("/");
 };

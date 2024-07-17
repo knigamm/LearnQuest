@@ -17,7 +17,7 @@ export type CourseData = {
   created_at: string;
   course_creator: string;
   course_uid: string;
-  is_published: boolean;
+  is_published?: boolean;
   updated_at: string;
 };
 
@@ -25,5 +25,14 @@ export const CourseCreation = z.object({
   title: z.string().min(1, "Course must have a title"),
   description: z.string().min(1, "Course must have a description"),
   price: z.string().min(1, "Enter the price of the course"),
-  image: z.string().min(1, "Course must have an image"),
+  image: z
+    .any()
+    .refine((file) => file?.length == 1, "Course must have an image"),
+});
+
+export const CourseUpdation = z.object({
+  title: z.string().min(1, "Course must have a title"),
+  description: z.string().min(1, "Course must have a description"),
+  price: z.string().min(1, "Enter the price of the course"),
+  image: z.string().min(1, { message: "Course must have an image" }),
 });
