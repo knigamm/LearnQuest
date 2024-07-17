@@ -17,7 +17,7 @@ const Login = () => {
       <div className="flex flex-col h-full w-full bg-slate-50">
         <div className="flex h-min w-full justify-end items-center gap-3 pr-6 pt-4">
           <text className="text-[14px] font-medium">
-            Don't have an account?
+            Don&apos;t have an account?
           </text>
           <Button variant="link" asChild className="p-0">
             <Link href="/signup">Sign Up</Link>

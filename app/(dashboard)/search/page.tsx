@@ -21,7 +21,7 @@ const SearchPage = async ({
           input="h-[50px] bg-white text-lg"
           searchValue={query ? query : ""}
         />
-        <h1 className="p-6 text-3xl font-bold">Search results for "{query}"</h1>
+        <h1 className="p-6 text-3xl font-bold">Search results for &quot;{query}&quot;</h1>
         <Suspense fallback={<SearchSkeleton/>}>
           <SearchSection query={query} />
         </Suspense>
