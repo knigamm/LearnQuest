@@ -148,7 +148,7 @@ const CourseForm = () => {
                   />
                   {errors?.title?.message && (
                     <div className="text-red-500 text-xs mt-1">
-                      {errors?.title?.message}
+                      {`${errors?.title?.message}`}
                     </div>
                   )}
                   <Button
@@ -189,7 +189,7 @@ const CourseForm = () => {
                   />
                   {errors?.description?.message && (
                     <div className="text-red-500 text-xs mt-1">
-                      {errors?.description?.message}
+                      {`${errors?.description?.message}`}
                     </div>
                   )}
                   <Button
@@ -227,7 +227,7 @@ const CourseForm = () => {
                   />
                   {errors?.price?.message && (
                     <div className="text-red-500 text-xs mt-1">
-                      {errors?.price?.message}
+                      {`${errors?.price?.message}`}
                     </div>
                   )}
                   <Button
@@ -272,7 +272,7 @@ const CourseForm = () => {
                     />
                     {errors?.image?.message && (
                       <div className="text-red-500 text-xs mt-1">
-                        {errors?.image?.message}
+                        {`${errors?.image?.message}`}
                       </div>
                     )}
                   </div>

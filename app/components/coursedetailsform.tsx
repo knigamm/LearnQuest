@@ -118,7 +118,7 @@ const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
             />
             {errors?.title?.message && (
               <div className="text-red-500 text-xs mt-1">
-                {errors?.title?.message}
+                {`${errors?.title?.message}`}
               </div>
             )}
           </div>
@@ -127,7 +127,7 @@ const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
             <Input type="number" {...register("price")} id="course_price" />
             {errors?.price?.message && (
               <div className="text-red-500 text-xs mt-1">
-                {errors?.price?.message}
+                {`${errors?.price?.message}`}
               </div>
             )}
           </div>
@@ -139,9 +139,9 @@ const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
             placeholder='e.g."In this course you will be taught.... The pre-requisites are..."'
             id="course_description"
           />
-          {errors?.description?.message && (
+          {errors?.description && (
             <div className="text-red-500 text-xs mt-1">
-              {errors?.description?.message}
+             {`${errors?.description?.message}`}
             </div>
           )}
         </div>
@@ -156,9 +156,9 @@ const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
               onChange={(e) => handleImage(e)}
               accept="image/jpeg,image/png,image/webp"
             />
-            {errors?.image?.message && (
+            {errors?.image && (
               <div className="text-red-500 text-xs mt-1">
-                {errors?.image?.message}
+                {`${errors?.image?.message}`}
               </div>
             )}
           </div>
