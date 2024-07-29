@@ -10,14 +10,10 @@ import CourseSkeleton from "./courseskeleton";
 
 const getCourses = async () => {
   try {
-    const authToken = getSession()?.value;
     const response = await fetch(
       `${process.env.BASE_URL}/api/course?page=1&limit=8`,
       {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
       }
     );
     const data = await response.json();

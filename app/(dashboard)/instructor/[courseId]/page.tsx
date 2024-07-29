@@ -1,34 +1,33 @@
-import { logoutaction } from "@/app/actions/authaction";
-import getSession from "@/app/util/getsession";
 import CourseUpdate from "@/app/components/courseupdate";
-import { CourseData } from "@/app/util/types";
 
-const getCourseDetails = async ({ courseId }: { courseId: string }) => {
-  try {
-    const authToken = getSession()?.value;
-    if (!authToken) {
-      return logoutaction();
-    }
-    const res = await fetch(`${process.env.BASE_URL}/api/course/instructor/${courseId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    });
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-    return;
-  }
-};
+import {
+  QueryClient,
+  dehydrate,
+  HydrationBoundary,
+} from "@tanstack/react-query";
+import { getCourseDetails, getCourseContent } from "@/app/actions/fetch";
 
 const Course = async ({ params }: { params: { courseId: string } }) => {
-  const data:CourseData = await getCourseDetails({ courseId: params.courseId });
-  console.log(data);
+  const clientQuery = new QueryClient();
+  await clientQuery.prefetchQuery({
+    queryKey: ["course-data"],
+    queryFn: () => {
+      return getCourseDetails(params.courseId);
+    },
+  });
+
+  await clientQuery.prefetchQuery({
+    queryKey: ["course-content"],
+    queryFn: () => {
+      return getCourseContent(params.courseId);
+    },
+  });
+
   return (
     <>
-      <CourseUpdate courseData={data}/>
+      <HydrationBoundary state={dehydrate(clientQuery)}>
+        <CourseUpdate />
+      </HydrationBoundary>
     </>
   );
 };

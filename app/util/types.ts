@@ -21,6 +21,17 @@ export type CourseData = {
   updated_at: string;
 };
 
+export type CourseContentData = {
+  content_description: string;
+  content_uid: string;
+  content_data: string;
+  created_at: string;
+  content_title: string;
+  course_uid: string;
+  content_type: string;
+  content_order: number;
+};
+
 export const CourseCreation = z.object({
   title: z.string().min(1, "Course must have a title"),
   description: z.string().min(1, "Course must have a description"),
@@ -36,3 +47,9 @@ export const CourseUpdation = z.object({
   price: z.string().min(1, "Enter the price of the course"),
   image: z.string().min(1, { message: "Course must have an image" }),
 });
+
+export const ChapterCreation = z.object({
+  title: z.string().min(1,"Chapter must have a title"),
+  description: z.string().min(1,"Chapter must have a description"),
+  data:z.string().min(1,"Chapter must have chapter data")
+})

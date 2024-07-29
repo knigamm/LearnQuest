@@ -11,21 +11,60 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
 import toast from "react-hot-toast";
 
-import { CourseUpdation, CourseData } from "../util/types";
+import { CourseUpdation, CourseData, CourseContentData } from "../util/types";
 import { getImageSignedUrl, updateCourse } from "../actions/courseactions";
 
 import { useState } from "react";
 import { Check, Loader2 } from "lucide-react";
 
+import { useParams } from "next/navigation";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { getCourseContent, getCourseDetails } from "../actions/fetch";
+
 type courseformdata = z.infer<typeof CourseUpdation>;
 
-type courseUpdateProps = {
-  courseData: CourseData;
-};
-
-const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
+const CourseDetailsForm = () => {
   const [file, setFile] = useState<File | undefined>(undefined);
   const [fileUrl, setFileUrl] = useState<string>("");
+
+  const params = useParams();
+  const queryClient = useQueryClient();
+
+  const { data: courseContent } = useQuery<
+    CourseContentData[] | { error: string }
+  >({
+    queryKey: ["course-content"],
+    queryFn: () => {
+      return getCourseContent(params.courseId as string);
+    },
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
+
+  const { data: courseData } = useQuery<CourseData | { error: string }>({
+    queryKey: ["course-data"],
+    queryFn: () => {
+      return getCourseDetails(params.courseId as string);
+    },
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+  });
+
+  if (!courseContent) {
+    return;
+  }
+  if ("error" in courseContent) {
+    return <div>{courseContent.error}</div>;
+  }
+
+  if (!courseData) {
+    return;
+  }
+  if ("error" in courseData) {
+    return <div>{courseData.error}</div>;
+  }
 
   const {
     register,
@@ -66,8 +105,6 @@ const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
   };
 
   const onSubmit: SubmitHandler<courseformdata> = async (data) => {
-    console.log("this is form data", data);
-    console.log("is updating");
     try {
       let url = "";
       const formdata = new FormData();
@@ -98,6 +135,7 @@ const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
           },
         });
       }
+      queryClient.invalidateQueries({ queryKey: ["course-data"] });
       toast.success("Course updated successfully!");
     } catch (error) {
       console.log(error);
@@ -141,7 +179,7 @@ const CourseDetailsForm = ({ courseData }: courseUpdateProps) => {
           />
           {errors?.description && (
             <div className="text-red-500 text-xs mt-1">
-             {`${errors?.description?.message}`}
+              {`${errors?.description?.message}`}
             </div>
           )}
         </div>
