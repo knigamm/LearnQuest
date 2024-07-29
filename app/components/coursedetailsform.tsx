@@ -51,21 +51,6 @@ const CourseDetailsForm = () => {
     refetchOnMount: false,
     refetchOnReconnect: false,
   });
-
-  if (!courseContent) {
-    return;
-  }
-  if ("error" in courseContent) {
-    return <div>{courseContent.error}</div>;
-  }
-
-  if (!courseData) {
-    return;
-  }
-  if ("error" in courseData) {
-    return <div>{courseData.error}</div>;
-  }
-
   const {
     register,
     handleSubmit,
@@ -80,13 +65,30 @@ const CourseDetailsForm = () => {
     setError,
   } = useForm<courseformdata>({
     resolver: zodResolver(CourseUpdation),
-    defaultValues: {
-      title: courseData.course_name,
-      description: courseData.course_description,
-      image: courseData.course_image,
-      price: courseData.course_price.toString(),
-    },
+    defaultValues:
+      courseData && !("error" in courseData)
+        ? {
+            title: courseData.course_name,
+            description: courseData.course_description,
+            image: courseData.course_image,
+            price: courseData.course_price.toString(),
+          }
+        : {},
   });
+
+  if (!courseContent) {
+    return;
+  }
+  if ("error" in courseContent) {
+    return <div>{courseContent.error}</div>;
+  }
+
+  if (!courseData) {
+    return;
+  }
+  if ("error" in courseData) {
+    return <div>{courseData.error}</div>;
+  }
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

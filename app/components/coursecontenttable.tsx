@@ -47,6 +47,13 @@ const CourseContentTable = () => {
     refetchOnMount: false,
     refetchOnReconnect: false,
   });
+  const [showCourseContent, setShowCourseContent] = useState(() => {
+    if (courseContent && !("error" in courseContent)) {
+      return courseContent as CourseContentData[];
+    } else {
+      return [] as CourseContentData[];
+    }
+  });
 
   const { data: courseData } = useQuery<CourseData | { error: string }>({
     queryKey: ["course-data"],
@@ -63,8 +70,6 @@ const CourseContentTable = () => {
   if ("error" in courseContent) {
     return <div>{courseContent.error}</div>;
   }
-
-  const [showCourseContent, setShowCourseContent] = useState(courseContent);
 
   if (!courseData) {
     return;

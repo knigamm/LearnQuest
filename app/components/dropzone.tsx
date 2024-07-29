@@ -9,10 +9,13 @@ function Dropzone({
 }: {
   onFileSelect: ({ dropFile }: { dropFile: FileWithPath }) => void;
 }) {
-  const onDrop = useCallback((acceptedFiles: any) => {
-    const file: FileWithPath = acceptedFiles[0];
-    onFileSelect({ dropFile: file });
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: any) => {
+      const file: FileWithPath = acceptedFiles[0];
+      onFileSelect({ dropFile: file });
+    },
+    [onFileSelect]
+  );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "video/*": [], "application/pdf": [".pdf"] },
@@ -29,7 +32,9 @@ function Dropzone({
           <p>Drop the files here ...</p>
         ) : (
           <div className="flex flex-col items-center justify-center gap-2">
-            <p>Drag 'n' drop some file here or click to select file</p>
+            <p>
+              Drag &apos;n&apos; drop some file here or click to select file
+            </p>
             <Upload className="text-blue-500 w-6 h-6" />
           </div>
         )}

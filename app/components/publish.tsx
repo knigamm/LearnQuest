@@ -22,6 +22,7 @@ const PublishSwitch = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
+
   const params = useParams();
   const { data: courseData } = useQuery<CourseData | { error: string }>({
     queryKey: ["course-data"],
@@ -31,6 +32,11 @@ const PublishSwitch = ({
     refetchOnMount: false,
     refetchOnReconnect: false,
   });
+  const [state, setStatus] = useState(() => {
+    if (courseData && !("error" in courseData)) {
+      return courseData.is_published;
+    }
+  });
 
   if (!courseData) {
     return;
@@ -38,8 +44,6 @@ const PublishSwitch = ({
   if ("error" in courseData) {
     return <div>{courseData.error}</div>;
   }
-
-  const [state, setStatus] = useState(courseData.is_published);
 
   const handlePublish = async (v: boolean) => {
     try {

@@ -28,7 +28,7 @@ import {
 } from "../actions/courseactions";
 
 import { useParams } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getCourseContent, getCourseDetails } from "../actions/fetch";
 
 type chapterCreation = z.infer<typeof ChapterCreation>;
@@ -45,18 +45,16 @@ const CourseContentForm = ({
   setOpen,
 }: contentFormProps) => {
   const params = useParams();
+  const [file, setFile] = useState<FileWithPath | null>(null);
+  const [fileType, setFileType] = useState(
+    content?.content_type ? content.content_type : ""
+  );
+  const [fileUrl, setFileUrl] = useState("");
   const { data: courseData } = useQuery<CourseData | { error: string }>({
     queryKey: ["course-data"],
     queryFn: () => getCourseDetails(params.courseId as string),
     refetchOnMount: false,
   });
-
-  if (!courseData) {
-    return;
-  }
-  if ("error" in courseData) {
-    return <div>{courseData.error}</div>;
-  }
 
   const { data: courseContent } = useQuery<
     CourseContentData[] | { error: string }
@@ -69,13 +67,6 @@ const CourseContentForm = ({
     refetchOnReconnect: false,
   });
 
-  if (!courseContent) {
-    return;
-  }
-  if ("error" in courseContent) {
-    return <div>{courseContent.error}</div>;
-  }
-
   const { data: signedUrl, isLoading: isSignedUrlLoading } = useQuery({
     queryKey: ["signedUrl"],
     queryFn: () => getVideoSignedUrl(content?.content_data),
@@ -83,12 +74,37 @@ const CourseContentForm = ({
     staleTime: 60,
   });
   console.log(signedUrl?.success?.signedUrl);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isLoading, dirtyFields },
+    setError,
+    setValue,
+  } = useForm<chapterCreation>({
+    resolver: zodResolver(ChapterCreation),
+    defaultValues: isEditing
+      ? {
+          title: content?.content_title,
+          description: content?.content_description,
+          data: content?.content_data,
+        }
+      : {},
+  });
 
-  const [file, setFile] = useState<FileWithPath | null>(null);
-  const [fileType, setFileType] = useState(
-    content?.content_type ? content.content_type : ""
-  );
-  const [fileUrl, setFileUrl] = useState("");
+  if (!courseContent) {
+    return;
+  }
+  if ("error" in courseContent) {
+    return <div>{courseContent.error}</div>;
+  }
+  if (!courseData) {
+    return;
+  }
+  if ("error" in courseData) {
+    return <div>{courseData.error}</div>;
+  }
+
+ 
   const onUpload = (file: FileWithPath | null) => {
     if (file) {
       setFile(file);
@@ -153,22 +169,7 @@ const CourseContentForm = ({
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isLoading, dirtyFields },
-    setError,
-    setValue,
-  } = useForm<chapterCreation>({
-    resolver: zodResolver(ChapterCreation),
-    defaultValues: isEditing
-      ? {
-          title: content?.content_title,
-          description: content?.content_description,
-          data: content?.content_data,
-        }
-      : {},
-  });
+
   return (
     <>
       <Dropzone onFileSelect={({ dropFile }) => onUpload(dropFile)} />
