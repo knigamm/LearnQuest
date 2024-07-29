@@ -19,10 +19,6 @@ const getCourses = async (query: string | undefined) => {
       `${process.env.BASE_URL}/api/course/keywords/${query}`,
       {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-        cache: "no-store",
       }
     );
     const data = await response.json();
