@@ -6,7 +6,7 @@ import { CourseContentData, CourseData } from "@/app/util/types";
 type coursedata = {
   course_data: CourseData;
   content_data: CourseContentData[];
-  enroll_data: { is_user_enrolled: boolean };
+  enroll_data: { is_user_enrolled: string };
 };
 
 const getCourse = async (courseId: string) => {
@@ -16,7 +16,7 @@ const getCourse = async (courseId: string) => {
       return logoutaction();
     }
     const course = await fetch(
-      `${process.env.BASE_URL}/api/course/${courseId}`,
+      `${process.env.BASE_URL}/api/course/get/${courseId}`,
       {
         method: "GET",
         headers: {

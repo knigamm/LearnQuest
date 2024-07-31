@@ -353,7 +353,7 @@ export const deleteCourse = async (formdata: FormData) => {
       return logoutaction();
     }
     const courseResponse = await fetch(
-      `${process.env.BASE_URL}/api/course/${formdata.get("course_id")}`,
+      `${process.env.BASE_URL}/api/course/get/${formdata.get("course_id")}`,
       {
         method: "GET",
         headers: {
