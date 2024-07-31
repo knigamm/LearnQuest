@@ -73,7 +73,7 @@ const CourseContentForm = ({
     enabled: !!content,
     staleTime: 60,
   });
-  console.log(signedUrl?.success?.signedUrl);
+
   const {
     register,
     handleSubmit,

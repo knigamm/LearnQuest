@@ -10,11 +10,12 @@ import { VideoIcon, FileIcon, BookOpenIcon } from "lucide-react";
 import { animate, motion, useMotionValueEvent, useScroll } from "framer-motion";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type coursedata = {
   course_data: CourseData;
   content_data: CourseContentData[];
-  enroll_data: { is_user_enrolled: boolean };
+  enroll_data: { is_user_enrolled: string };
 };
 
 type coursecontentprops = {
@@ -24,6 +25,7 @@ type coursecontentprops = {
 const CourseContent = ({ course }: coursecontentprops) => {
   const [hidden, setHidden] = useState(true);
   const { scrollY } = useScroll();
+  console.log(course.enroll_data.is_user_enrolled);
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest > 250) {
       setHidden(false);
@@ -35,13 +37,13 @@ const CourseContent = ({ course }: coursecontentprops) => {
     <>
       <motion.nav
         variants={{
-          visible: { opacity: 100, display: "block" },
-          hidden: { opacity: 0, display: "none" },
+          visible: { y: 0 },
+          hidden: { y: "-100%" },
         }}
         initial="hidden"
-        transition={{ duration: 0.35, ease: "easeIn" }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
         animate={hidden ? "hidden" : "visible"}
-        className="w-full sticky top-16 h-20 bg-black p-5 text-white"
+        className="w-full fixed top-16 h-20 bg-black p-5 text-white"
       >
         <p className="font-bold">{course.course_data.course_name}</p>
         <p className="mt-1">{course.course_data.course_description}</p>
@@ -61,11 +63,16 @@ const CourseContent = ({ course }: coursecontentprops) => {
                   <div className="text-4xl font-bold">
                     &#8377;{course.course_data.course_price}
                   </div>
-                  <Button size="lg">
-                    {course.enroll_data.is_user_enrolled === true
-                      ? "Resume"
-                      : "Enroll Now"}
-                  </Button>
+                  {course.enroll_data.is_user_enrolled === "true" && (
+                    <Link
+                      href={`/course/${course.course_data.course_uid}/${course.content_data[0].content_uid}`}
+                    >
+                      <Button size="lg">Resume</Button>
+                    </Link>
+                  )}
+                  {course.enroll_data.is_user_enrolled === "false" && (
+                    <Button size="lg">Enroll</Button>
+                  )}
                 </div>
               </div>
             </div>
